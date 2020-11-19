@@ -21,7 +21,8 @@ message Person {
   
   repeated PhoneNumber phones = 4;
   
-  message AddressBook {
-    repeated Person people = 1;
-  }
+}
+
+message AddressBook {
+  repeated Person people = 1;
 }

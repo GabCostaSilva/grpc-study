@@ -1,10 +1,9 @@
 package com.example.tutorial;
 
 import com.example.tutorial.AddressBookProtos.Person;
+import com.example.tutorial.AddressBookProtos.AddressBook;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 
 public class AddPerson {
     static Person promptForAddress(BufferedReader stdin, PrintStream stdout) throws IOException {
@@ -47,4 +46,25 @@ public class AddPerson {
         }
         return person.build();
     }
+
+  public static void main(String[] args) throws Exception {
+    if (args.length != 1) {
+      System.err.println("Usage:  AddPerson ADDRESS_BOOK_FILE");
+      System.exit(-1);
+    }
+
+    AddressBook.Builder addressBook = AddressBook.newBuilder();
+
+    try {
+      addressBook.mergeFrom(new FileInputStream(args[0]));
+    } catch (FileNotFoundException e) {
+      System.out.println(args[0] + ": File not found.  Creating a new file.");
+    }
+
+    addressBook.addPeople(promptForAddress(new BufferedReader(new InputStreamReader(System.in)), System.out));
+
+    OutputStream output = new BufferedOutputStream(new FileOutputStream(args[0]));
+    addressBook.build().writeTo(output);
+    output.close();
+  }
 }
